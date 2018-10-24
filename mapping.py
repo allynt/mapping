@@ -59,7 +59,6 @@ def handle_invalid_usage(error):
 @app.route('/api/v1/tippecanoe', methods=['POST'])
 def tippecanoe_request():
     
-    import pdb; pdb.set_trace()
     input_path = request.json["input"]
     output_path = request.json["output"]
 
@@ -72,10 +71,10 @@ def tippecanoe_request():
 
     return "hello world"
 
-
 #############
 # run flask #
 #############
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
