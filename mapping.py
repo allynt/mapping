@@ -19,10 +19,10 @@ app = Flask(__name__)
 schema = {
     'type': 'object',
     'properties': {
-        'input': {'type': 'string'},
-        'output': {'type': 'string'},
+        'basename': {'type': 'string'},
+        'geojson': {'type': 'string'},
     },
-    'required': ['input', 'output']
+    'required': ['basename', 'geojson']
 }
 
 ##################
@@ -58,17 +58,42 @@ def handle_invalid_usage(error):
 @expects_json(schema)
 @app.route('/api/v1/tippecanoe', methods=['POST'])
 def tippecanoe_request():
-    
-    input_path = request.json["input"]
-    output_path = request.json["output"]
 
-    if not os.path.isfile(input_path):
-        msg = f"cannot find '{input_path}'"
-        raise InvalidUsage(msg, status_code=400)
+    print("one")    
     
-    cmd = f"tippecanoe -o {output_path} -zg --drop-densest-as-needed {input_path}"
+    basename = request.json["basename"]
+    geojson_data = request.json["geojson"]
+
+    print("two")    
+
+    geojson_file_path = os.path.join(
+        os.path.dirname(__file__),
+        "data",
+        basename + ".geojson",
+    )
+    os.makedirs(os.path.dirname(geojson_file_path), exist_ok=True)
+
+    print("three")    
+
+    mbtiles_file_path = os.path.join(
+        os.path.dirname(__file__),
+        "data",
+        basename + ".mbitles"
+    )
+    os.makedirs(os.path.dirname(mbtiles_file_path), exist_ok=True)
+
+    print("four")    
+
+    with open(geojson_file_path, "w+") as fp:
+        json.dump(geojson_data, fp)
+
+    print("five")    
+
+    cmd = f"tippecanoe -o {mbtiles_file_path} -zg --drop-densest-as-needed {geojson_file_path}"
     proc = subprocess.run(cmd.split())
 
+    print("six")
+    
     return "hello world"
 
 #############
