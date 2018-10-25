@@ -14,6 +14,11 @@ import subprocess
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
+DEFAULT_MAX_ZOOM = 14
+DEFAULT_MIN_ZOOM = 0
+DEFAULT_MAX_DETAIL = 12
+DEFAULT_MIN_DETAIL = 12
+
 ###########
 # the app #
 ###########
@@ -29,6 +34,10 @@ schema = {
     'properties': {
         'basename': {'type': 'string'},
         'geojson': {'type': 'string'},
+        'min_zoom': {'type': 'number'},
+        'max_zoom': {'type': 'number'},
+        'min_detail': {'type': 'number'},
+        'max_detail': {'type': 'number'},
     },
     'required': ['basename', 'geojson']
 }
@@ -80,9 +89,17 @@ def setup_file_path(file_path):
 @expects_json(schema)
 @app.route('/api/v1/tippecanoe', methods=['POST'])
 def tippecanoe_request():
-    
+
     basename = request.json["basename"]
     geojson_data = request.json["geojson"]
+
+    min_zoom = request.json.get("min_zoom", DEFAULT_MIN_ZOOM)
+    max_zoom = request.json.get("max_zoom", DEFAULT_MAX_ZOOM)
+    min_detail = request.json.get("min_detail", DEFAULT_MIN_DETAIL)
+    max_detail = request.json.get("max_detail", DEFAULT_MAX_DETAIL)
+
+    if (min_zoom > max_zoom) or (min_detail > max_detail):
+        raise InvalidUsage("invalid arguments")
 
     geojson_file_path = os.path.join(
         DATA_DIR,
@@ -100,8 +117,17 @@ def tippecanoe_request():
         json.dump(geojson_data, fp)
 
     try:
-        cmd = f"tippecanoe -o {mbtiles_file_path} -zg --drop-densest-as-needed {geojson_file_path}"
-        proc = subprocess.run(cmd.split())
+        cmd = [
+            "tippecanoe",
+            "-o", mbtiles_file_path,
+            "-Z", str(min_zoom),
+            "-z", str(max_zoom),
+            "-D", str(min_detail),
+            "-d", str(max_detail),
+            "--drop-densest-as-needed",
+            geojson_file_path,
+        ]
+        proc = subprocess.run(cmd)
     except Exception as e:
         raise InvalidUsage(e.message)
 
