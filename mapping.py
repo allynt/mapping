@@ -87,10 +87,9 @@ def setup_file_path(file_path):
 ###################
 
 @expects_json(schema)
-@app.route('/api/v1/tippecanoe', methods=['POST', 'GET'])
+@app.route('/api/v1/tippecanoe', methods=['POST'])
 def tippecanoe_request():
 
-    import pdb; pdb.set_trace()
     basename = request.json["basename"]
     geojson_data = request.json["geojson"]
 
