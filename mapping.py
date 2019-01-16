@@ -126,7 +126,7 @@ def tippecanoe_request():
             "tippecanoe",
             "-o", mbtiles_file_path,
             "-zg",
-            "--drop-densest-as-needed",
+            "--coalesce-densest-as-needed",
             "--extend-zooms-if-still-dropping",
             # "-Z", str(min_zoom),
             # "-z", str(max_zoom),
