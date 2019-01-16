@@ -14,6 +14,11 @@ import subprocess
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
+# DEFAULT_MAX_ZOOM = 14
+# DEFAULT_MIN_ZOOM = 0
+# DEFAULT_MAX_DETAIL = 12
+# DEFAULT_MIN_DETAIL = 12
+
 DEFAULT_MAX_ZOOM = 14
 DEFAULT_MIN_ZOOM = 0
 DEFAULT_MAX_DETAIL = 12
@@ -124,7 +129,7 @@ def tippecanoe_request():
             "-z", str(max_zoom),
             "-D", str(min_detail),
             "-d", str(max_detail),
-            "--drop-densest-as-needed",
+            # "--drop-densest-as-needed",
             geojson_file_path,
         ]
         proc = subprocess.run(cmd)
