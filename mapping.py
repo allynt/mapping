@@ -125,10 +125,13 @@ def tippecanoe_request():
         cmd = [
             "tippecanoe",
             "-o", mbtiles_file_path,
-            "-Z", str(min_zoom),
-            "-z", str(max_zoom),
-            "-D", str(min_detail),
-            "-d", str(max_detail),
+            "-zg",
+            "--drop-densest-as-needed",
+            "--extend-zooms-if-still-dropping",
+            # "-Z", str(min_zoom),
+            # "-z", str(max_zoom),
+            # "-D", str(min_detail),
+            # "-d", str(max_detail),
             # "--drop-densest-as-needed",
             geojson_file_path,
         ]
